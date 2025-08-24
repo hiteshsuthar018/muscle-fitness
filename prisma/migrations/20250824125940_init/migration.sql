@@ -2,10 +2,10 @@
 CREATE TYPE "public"."UserRole" AS ENUM ('ADMIN', 'STAFF', 'MEMBER');
 
 -- CreateEnum
-CREATE TYPE "public"."PaymentStatus" AS ENUM ('PAID', 'UNPAID', 'OVERDUE');
+CREATE TYPE "public"."PaymentStatus" AS ENUM ('PAID', 'UNPAID', 'PENDING');
 
 -- CreateEnum
-CREATE TYPE "public"."PaymentMethod" AS ENUM ('CASH', 'CARD', 'BANK_TRANSFER', 'ONLINE');
+CREATE TYPE "public"."PaymentMethod" AS ENUM ('CASH', 'CARD', 'UPI', 'BANK_TRANSFER');
 
 -- CreateTable
 CREATE TABLE "public"."Account" (
@@ -65,8 +65,8 @@ CREATE TABLE "public"."Member" (
     "phone" TEXT NOT NULL,
     "age" INTEGER NOT NULL,
     "gender" TEXT NOT NULL,
-    "address" TEXT,
-    "emergencyContact" TEXT,
+    "address" TEXT NOT NULL,
+    "emergencyContact" TEXT NOT NULL,
     "planId" TEXT NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE "public"."Member" (
     "profileImage" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "createdById" TEXT NOT NULL,
+    "createdById" TEXT,
 
     CONSTRAINT "Member_pkey" PRIMARY KEY ("id")
 );
@@ -86,7 +86,7 @@ CREATE TABLE "public"."MembershipPlan" (
     "name" TEXT NOT NULL,
     "duration" INTEGER NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
-    "description" TEXT,
+    "description" TEXT NOT NULL,
     "features" TEXT[],
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -101,7 +101,7 @@ CREATE TABLE "public"."Attendance" (
     "memberId" TEXT NOT NULL,
     "checkIn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "checkOut" TIMESTAMP(3),
-    "recordedBy" TEXT NOT NULL,
+    "recordedBy" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -113,11 +113,9 @@ CREATE TABLE "public"."Payment" (
     "id" TEXT NOT NULL,
     "memberId" TEXT NOT NULL,
     "amount" DOUBLE PRECISION NOT NULL,
-    "status" "public"."PaymentStatus" NOT NULL,
-    "dueDate" TIMESTAMP(3) NOT NULL,
-    "paidDate" TIMESTAMP(3),
-    "method" "public"."PaymentMethod",
-    "notes" TEXT,
+    "method" "public"."PaymentMethod" NOT NULL,
+    "status" "public"."PaymentStatus" NOT NULL DEFAULT 'PENDING',
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -141,11 +139,9 @@ CREATE TABLE "public"."Announcement" (
 CREATE TABLE "public"."WorkoutPlan" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "description" TEXT,
-    "memberId" TEXT,
-    "createdBy" TEXT NOT NULL,
-    "exercises" JSONB NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "description" TEXT NOT NULL,
+    "exercises" TEXT[],
+    "memberId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -180,22 +176,16 @@ ALTER TABLE "public"."Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY 
 ALTER TABLE "public"."Member" ADD CONSTRAINT "Member_planId_fkey" FOREIGN KEY ("planId") REFERENCES "public"."MembershipPlan"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Member" ADD CONSTRAINT "Member_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Member" ADD CONSTRAINT "Member_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Attendance" ADD CONSTRAINT "Attendance_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "public"."Member"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Attendance" ADD CONSTRAINT "Attendance_recordedBy_fkey" FOREIGN KEY ("recordedBy") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Attendance" ADD CONSTRAINT "Attendance_recordedBy_fkey" FOREIGN KEY ("recordedBy") REFERENCES "public"."User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Payment" ADD CONSTRAINT "Payment_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "public"."Member"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Announcement" ADD CONSTRAINT "Announcement_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."WorkoutPlan" ADD CONSTRAINT "WorkoutPlan_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "public"."Member"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."WorkoutPlan" ADD CONSTRAINT "WorkoutPlan_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

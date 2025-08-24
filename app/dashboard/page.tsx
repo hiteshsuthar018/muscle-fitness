@@ -360,7 +360,7 @@ export default function Dashboard() {
 
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">Today's Attendance</CardTitle>
+            <CardTitle className="text-sm font-medium text-white">Today&apos;s Attendance</CardTitle>
             <Calendar className="h-4 w-4 text-gray-300" />
           </CardHeader>
           <CardContent>
@@ -438,7 +438,7 @@ export default function Dashboard() {
 
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white">Today's Attendance</CardTitle>
+            <CardTitle className="text-white">Today&apos;s Attendance</CardTitle>
             <CardDescription className="text-gray-300">Members who checked in today</CardDescription>
           </CardHeader>
           <CardContent>

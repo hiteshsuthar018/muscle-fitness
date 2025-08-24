@@ -155,7 +155,7 @@ export default function SignInPage() {
 
         <div className="text-center">
           <p className="text-sm text-gray-400">
-            Don't have an account? Contact the admin to get your login credentials.
+            Don&apos;t have an account? Contact the admin to get your login credentials.
           </p>
         </div>
       </div>

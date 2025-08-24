@@ -12,7 +12,6 @@ import {
   Trash2, 
   Calendar,
   User,
-  Eye,
   X
 } from 'lucide-react'
 import { formatDate } from '@/app/lib/utils'

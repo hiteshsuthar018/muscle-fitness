@@ -8,21 +8,15 @@ import { Textarea } from '@/app/components/ui/textarea'
 import { 
   CreditCard, 
   Users, 
-  Calendar,
   CheckCircle,
   XCircle,
-  Eye,
   Edit,
   Save,
   X,
   User,
-  Mail,
-  Phone,
-  Calendar as CalendarIcon,
   Plus,
   Trash2
 } from 'lucide-react'
-import { formatDate, formatCurrency } from '@/app/lib/utils'
 
 interface MembershipPlan {
   id: string
@@ -102,7 +96,7 @@ export default function PlansPage() {
   }
 
   const calculateStats = (plansData: MembershipPlan[]) => {
-    let totalPlans = plansData.length
+    const totalPlans = plansData.length
     let activeMembers = 0
     let paidMembers = 0
     let unpaidMembers = 0
@@ -126,7 +120,7 @@ export default function PlansPage() {
     })
   }
 
-  const handleMemberClick = (member: any) => {
+  const handleMemberClick = (member: { id: string; name: string; email: string; phone?: string; age?: number; gender?: string; address?: string; emergencyContact?: string; planId?: string; startDate?: string; endDate?: string; paymentStatus?: string }) => {
     setMemberModalData({
       id: member.id,
       name: member.name,
@@ -186,8 +180,6 @@ export default function PlansPage() {
       alert('Error updating payment status')
     }
   }
-
-
 
   const handleSaveMemberChanges = async () => {
     if (!memberModalData) return
@@ -397,7 +389,7 @@ export default function PlansPage() {
                 <div>
                   <h4 className="font-semibold text-white mb-3">Features</h4>
                   <ul className="space-y-2">
-                    {plan.features.map((feature, index) => (
+                    {plan.features.map((feature: string, index: number) => (
                       <li key={index} className="flex items-center text-gray-300">
                         <CheckCircle className="h-4 w-4 text-green-400 mr-2" />
                         {feature}
@@ -742,129 +734,6 @@ export default function PlansPage() {
         </div>
       )}
 
-      {/* Plan Edit Modal */}
-      {showPlanModal && planModalData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-white">Edit Plan</h2>
-                <Button
-                  onClick={() => setShowPlanModal(false)}
-                  variant="ghost"
-                  className="text-gray-300 hover:text-white hover:bg-gray-700"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Plan Name</label>
-                  <Input
-                    value={planModalData.name}
-                    onChange={(e) => setPlanModalData({...planModalData, name: e.target.value})}
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Price (₹)</label>
-                  <Input
-                    type="number"
-                    value={planModalData.price}
-                    onChange={(e) => setPlanModalData({...planModalData, price: parseFloat(e.target.value)})}
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Duration (months)</label>
-                  <Input
-                    type="number"
-                    value={planModalData.duration}
-                    onChange={(e) => setPlanModalData({...planModalData, duration: parseInt(e.target.value)})}
-                    className="bg-gray-700 border-gray-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                  <select
-                    value={planModalData.isActive ? 'active' : 'inactive'}
-                    onChange={(e) => setPlanModalData({...planModalData, isActive: e.target.value === 'active'})}
-                    className="w-full px-3 py-2 rounded-md border border-gray-600 bg-gray-700 text-white"
-                  >
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                <Textarea
-                  value={planModalData.description}
-                  onChange={(e) => setPlanModalData({...planModalData, description: e.target.value})}
-                  className="bg-gray-700 border-gray-600 text-white"
-                  rows={3}
-                />
-              </div>
-
-              <div className="mt-6">
-                <div className="flex justify-between items-center mb-3">
-                  <label className="block text-sm font-medium text-gray-300">Features</label>
-                  <Button
-                    onClick={addFeature}
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Feature
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {planModalData.features.map((feature, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <Input
-                        value={feature}
-                        onChange={(e) => updateFeature(index, e.target.value)}
-                        placeholder="Enter feature description"
-                        className="bg-gray-700 border-gray-600 text-white"
-                      />
-                      <Button
-                        onClick={() => removeFeature(index)}
-                        size="sm"
-                        variant="ghost"
-                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-end space-x-4 mt-6">
-                <Button
-                  onClick={() => setShowPlanModal(false)}
-                  variant="outline"
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSavePlanChanges}
-                  className="bg-orange-600 hover:bg-orange-700 text-white"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Changes
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

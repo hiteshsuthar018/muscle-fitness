@@ -14,7 +14,7 @@ import {
   CalendarDays,
   User
 } from 'lucide-react'
-import { formatDate, formatCurrency } from '@/app/lib/utils'
+import { formatDate } from '@/app/lib/utils'
 import { useSession } from 'next-auth/react'
 
 interface Member {
@@ -487,7 +487,7 @@ export default function AttendancePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-400">{stats.attendanceRate}%</div>
-            <p className="text-xs text-gray-400">Today's rate</p>
+            <p className="text-xs text-gray-400">Today&apos;s rate</p>
           </CardContent>
         </Card>
       </div>

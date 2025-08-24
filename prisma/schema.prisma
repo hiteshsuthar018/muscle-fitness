@@ -13,6 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  ADMIN
+  STAFF
+  MEMBER
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+  PENDING
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  UPI
+  BANK_TRANSFER
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -51,12 +70,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts Account[]
-  sessions Session[]
-  members Member[]
-  attendance Attendance[]
+  accounts      Account[]
+  sessions      Session[]
+  members       Member[]
   announcements Announcement[]
-  workoutPlans WorkoutPlan[]
+  attendance    Attendance[]
 }
 
 model VerificationToken {
@@ -67,37 +85,29 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum UserRole {
-  ADMIN
-  STAFF
-  MEMBER
-}
-
 model Member {
-  id              String        @id @default(cuid())
-  name            String
-  email           String        @unique
-  phone           String
-  age             Int
-  gender          String
-  address         String?
-  emergencyContact String?
-  membershipPlan  MembershipPlan @relation(fields: [planId], references: [id])
-  planId          String
-  startDate       DateTime
-  endDate         DateTime
-  paymentStatus   PaymentStatus @default(UNPAID)
-  isActive        Boolean       @default(true)
-  profileImage    String?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id               String        @id @default(cuid())
+  name             String
+  email            String        @unique
+  phone            String
+  age              Int
+  gender           String
+  address          String
+  emergencyContact String
+  planId           String
+  startDate        DateTime
+  endDate          DateTime
+  paymentStatus    PaymentStatus @default(UNPAID)
+  isActive         Boolean       @default(true)
+  profileImage     String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  createdById      String?
 
-  // Relations
+  membershipPlan MembershipPlan @relation(fields: [planId], references: [id])
   createdBy       User?         @relation(fields: [createdById], references: [id])
-  createdById     String?
   attendance      Attendance[]
   payments        Payment[]
-  workoutPlans    WorkoutPlan[]
 }
 
 model MembershipPlan {
@@ -105,8 +115,8 @@ model MembershipPlan {
   name        String
   duration    Int      // in months
   price       Float
-  description String?
-  features    String[]
+  description String
+  features    String[] // JSON array
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -127,17 +137,15 @@ model Attendance {
 }
 
 model Payment {
-  id        String      @id @default(cuid())
+  id        String        @id @default(cuid())
   memberId  String
-  member    Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  member    Member        @relation(fields: [memberId], references: [id], onDelete: Cascade)
   amount    Float
-  status    PaymentStatus
-  dueDate   DateTime
-  paidDate  DateTime?
-  method    PaymentMethod?
-  notes     String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  method    PaymentMethod
+  status    PaymentStatus @default(PENDING)
+  date      DateTime      @default(now())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model Announcement {
@@ -154,26 +162,9 @@ model Announcement {
 model WorkoutPlan {
   id          String   @id @default(cuid())
   title       String
-  description String?
-  memberId    String?
-  member      Member?  @relation(fields: [memberId], references: [id])
-  createdBy   String
-  user        User     @relation(fields: [createdBy], references: [id])
-  exercises   Json     // Array of exercise objects
-  isActive    Boolean  @default(true)
+  description String
+  exercises   String[] // JSON array
+  memberId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-enum PaymentStatus {
-  PAID
-  UNPAID
-  OVERDUE
-}
-
-enum PaymentMethod {
-  CASH
-  CARD
-  BANK_TRANSFER
-  ONLINE
 }

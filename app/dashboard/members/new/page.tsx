@@ -137,7 +137,7 @@ export default function AddMemberPage() {
             <span>Member Information</span>
           </CardTitle>
           <CardDescription className="text-gray-300">
-            Fill in the member's details below. A password will be generated automatically.
+            Fill in the member&apos;s details below. A password will be generated automatically.
           </CardDescription>
         </CardHeader>
         <CardContent>
