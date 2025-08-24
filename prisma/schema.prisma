@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(MEMBER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  members Member[]
+  attendance Attendance[]
+  announcements Announcement[]
+  workoutPlans WorkoutPlan[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  MEMBER
+}
+
+model Member {
+  id              String        @id @default(cuid())
+  name            String
+  email           String        @unique
+  phone           String
+  age             Int
+  gender          String
+  address         String?
+  emergencyContact String?
+  membershipPlan  MembershipPlan @relation(fields: [planId], references: [id])
+  planId          String
+  startDate       DateTime
+  endDate         DateTime
+  paymentStatus   PaymentStatus @default(UNPAID)
+  isActive        Boolean       @default(true)
+  profileImage    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  createdBy       User?         @relation(fields: [createdById], references: [id])
+  createdById     String?
+  attendance      Attendance[]
+  payments        Payment[]
+  workoutPlans    WorkoutPlan[]
+}
+
+model MembershipPlan {
+  id          String   @id @default(cuid())
+  name        String
+  duration    Int      // in months
+  price       Float
+  description String?
+  features    String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members Member[]
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  checkIn   DateTime @default(now())
+  checkOut  DateTime?
+  recordedBy String?
+  user      User?    @relation(fields: [recordedBy], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id        String      @id @default(cuid())
+  memberId  String
+  member    Member      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  amount    Float
+  status    PaymentStatus
+  dueDate   DateTime
+  paidDate  DateTime?
+  method    PaymentMethod?
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WorkoutPlan {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  memberId    String?
+  member      Member?  @relation(fields: [memberId], references: [id])
+  createdBy   String
+  user        User     @relation(fields: [createdBy], references: [id])
+  exercises   Json     // Array of exercise objects
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+  OVERDUE
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  ONLINE
+}
