@@ -7,15 +7,10 @@ import { Input } from '@/app/components/ui/input'
 import { 
   Plus, 
   Search, 
-  Filter,
   Eye,
   Edit,
   Trash2,
   User,
-  Mail,
-  Phone,
-  Calendar,
-  CreditCard,
   CheckCircle,
   XCircle,
   EyeOff,
@@ -23,7 +18,6 @@ import {
   X
 } from 'lucide-react'
 import Link from 'next/link'
-import { formatDate, formatCurrency } from '@/app/lib/utils'
 
 interface Member {
   id: string

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card'
 import { Button } from '@/app/components/ui/button'
 import { Input } from '@/app/components/ui/input'
@@ -43,13 +43,13 @@ export default function AnnouncementsPage() {
     isActive: true
   })
 
-  const isMember = session?.user?.role === 'MEMBER'
+  const isMember = (session?.user as any)?.role === 'MEMBER'
 
   useEffect(() => {
     fetchAnnouncements()
   }, [])
 
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     try {
       const response = await fetch('/api/announcements')
       if (response.ok) {
@@ -63,7 +63,7 @@ export default function AnnouncementsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [isMember])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -99,7 +99,6 @@ export default function AddMemberPage() {
       })
 
       if (response.ok) {
-        const result = await response.json()
         alert(`Member added successfully!\n\nLogin Credentials:\nEmail: ${formData.email}\nPassword: ${formData.password}\n\nPlease save these credentials for the member.`)
         router.push('/dashboard/members?message=Member added successfully!')
       } else {

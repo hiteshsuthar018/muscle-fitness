@@ -68,7 +68,7 @@ export default function PlansPage() {
   const [memberModalData, setMemberModalData] = useState<MemberModalData | null>(null)
   const [planModalData, setPlanModalData] = useState<PlanModalData | null>(null)
   const [isEditingMember, setIsEditingMember] = useState(false)
-  const [isEditingPlan, setIsEditingPlan] = useState(false)
+
   const [stats, setStats] = useState({
     totalPlans: 0,
     activeMembers: 0,
@@ -150,7 +150,6 @@ export default function PlansPage() {
       isActive: plan.isActive
     })
     setShowPlanModal(true)
-    setIsEditingPlan(true)
   }
 
   const handlePaymentDone = async () => {
@@ -220,7 +219,6 @@ export default function PlansPage() {
 
       if (response.ok) {
         fetchPlans() // Refresh the data
-        setIsEditingPlan(false)
         setShowPlanModal(false)
         alert('Plan updated successfully!')
       } else {

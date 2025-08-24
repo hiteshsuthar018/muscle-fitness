@@ -53,9 +53,7 @@ export default function DashboardLayout({
     return null
   }
 
-  const isMember = session.user?.role === 'MEMBER'
-  const isAdmin = session.user?.role === 'ADMIN'
-  const isStaff = session.user?.role === 'STAFF'
+  const isMember = (session.user as any)?.role === 'MEMBER'
 
   // Navigation items based on user role
   const getNavigation = () => {
@@ -151,7 +149,7 @@ export default function DashboardLayout({
               </div>
               <div>
                 <p className="text-sm font-medium text-white">{session.user?.name}</p>
-                <p className="text-xs text-gray-400">{session.user?.role}</p>
+                <p className="text-xs text-gray-400">{(session.user as any)?.role}</p>
               </div>
             </div>
             <Button

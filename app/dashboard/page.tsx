@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card'
-import { Button } from '@/app/components/ui/button'
 import { 
   Users, 
   UserCheck, 
@@ -11,16 +10,14 @@ import {
   DollarSign, 
   Plus,
   TrendingUp,
-  TrendingDown,
   Activity,
   Home,
   Clock,
   CreditCard,
-  CheckCircle,
-  XCircle
+  CheckCircle
 } from 'lucide-react'
 import Link from 'next/link'
-import { formatCurrency, formatDate } from '@/app/lib/utils'
+import { formatDate } from '@/app/lib/utils'
 
 interface DashboardStats {
   totalMembers: number
@@ -60,7 +57,7 @@ export default function Dashboard() {
   })
   const [loading, setLoading] = useState(true)
 
-  const isMember = session?.user?.role === 'MEMBER'
+  const isMember = (session?.user as any)?.role === 'MEMBER'
 
   useEffect(() => {
     if (isMember) {

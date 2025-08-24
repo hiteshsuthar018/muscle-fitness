@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card'
 import { Button } from '@/app/components/ui/button'
 import { Input } from '@/app/components/ui/input'
@@ -81,18 +81,23 @@ export default function AttendancePage() {
     attendanceRate: 0
   })
 
-  const isMember = session?.user?.role === 'MEMBER'
+  const isMember = (session?.user as any)?.role === 'MEMBER'
 
-  useEffect(() => {
-    if (isMember) {
-      fetchMemberAttendance()
-    } else {
-      fetchAttendance()
-      fetchMembers()
-    }
-  }, [selectedDate, isMember])
+  const calculateStats = useCallback((membersData: Member[]) => {
+    const totalMembers = membersData.length
+    const presentToday = attendance.length
+    const absentToday = totalMembers - presentToday
+    const attendanceRate = totalMembers > 0 ? Math.round((presentToday / totalMembers) * 100) : 0
 
-  const fetchMembers = async () => {
+    setStats({
+      totalMembers,
+      presentToday,
+      absentToday,
+      attendanceRate
+    })
+  }, [attendance])
+
+  const fetchMembers = useCallback(async () => {
     try {
       const response = await fetch('/api/members')
       if (response.ok) {
@@ -105,9 +110,9 @@ export default function AttendancePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const fetchAttendance = async () => {
+  const fetchAttendance = useCallback(async () => {
     try {
       const response = await fetch(`/api/attendance?date=${selectedDate}`)
       if (response.ok) {
@@ -117,9 +122,9 @@ export default function AttendancePage() {
     } catch (error) {
       console.error('Error fetching attendance:', error)
     }
-  }
+  }, [selectedDate])
 
-  const fetchMemberAttendance = async () => {
+  const fetchMemberAttendance = useCallback(async () => {
     try {
       // For members, fetch their own attendance for the current month
       const currentDate = new Date()
@@ -136,21 +141,18 @@ export default function AttendancePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const calculateStats = (membersData: Member[]) => {
-    const totalMembers = membersData.length
-    const presentToday = attendance.length
-    const absentToday = totalMembers - presentToday
-    const attendanceRate = totalMembers > 0 ? Math.round((presentToday / totalMembers) * 100) : 0
+  useEffect(() => {
+    if (isMember) {
+      fetchMemberAttendance()
+    } else {
+      fetchAttendance()
+      fetchMembers()
+    }
+  }, [selectedDate, isMember, fetchAttendance, fetchMembers, fetchMemberAttendance])
 
-    setStats({
-      totalMembers,
-      presentToday,
-      absentToday,
-      attendanceRate
-    })
-  }
+
 
   const handleAttendanceToggle = async (memberId: string, isPresent: boolean) => {
     try {

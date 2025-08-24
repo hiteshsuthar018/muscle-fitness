@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card'
 import { 
@@ -11,7 +11,7 @@ import {
   Clock,
   DollarSign
 } from 'lucide-react'
-import { formatDate, formatCurrency } from '@/app/lib/utils'
+import { formatDate } from '@/app/lib/utils'
 
 interface Payment {
   id: string
@@ -38,7 +38,7 @@ export default function MemberPaymentsPage() {
     fetchMemberPayments()
   }, [])
 
-  const fetchMemberPayments = async () => {
+  const fetchMemberPayments = useCallback(async () => {
     try {
       // For now, using mock data. In a real app, you'd fetch from API
       setPayments([
@@ -80,7 +80,7 @@ export default function MemberPaymentsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [session?.user?.name])
 
   const getStatusColor = (status: string) => {
     switch (status) {
