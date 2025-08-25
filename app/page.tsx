@@ -57,7 +57,7 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gray-900 overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-gray-900/95 backdrop-blur-md shadow-lg border-b border-gray-700 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +84,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section with Video Background */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden w-full">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -92,10 +92,10 @@ export default function Home() {
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover max-w-none"
             poster="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1920&h=1080&fit=crop"
           >
-            <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=164&oauth2_token_id=57447761" type="video/mp4" />
+            <source src="/posterVideo.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
@@ -138,7 +138,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gray-800 relative">
+      <section className="py-20 bg-gray-800 relative w-full">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-900/20 to-red-900/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -175,7 +175,7 @@ export default function Home() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-gray-900">
+      <section id="about" className="py-20 bg-gray-900 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -222,7 +222,7 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-gray-800">
+      <section id="services" className="py-20 bg-gray-800 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Our Premium Services</h2>
@@ -292,14 +292,14 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-900">
+      <section className="py-20 bg-gray-900 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">What Our Members Say</h2>
             <p className="text-xl text-gray-300">Real stories from real people who transformed their lives with us</p>
           </div>
-          <div className="relative">
-            <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
+          <div className="relative overflow-hidden">
+            <div className="flex transition-transform duration-500 ease-in-out w-full" style={{ transform: `translateX(-${currentTestimonial * 100}%)` }}>
               {testimonials.map((testimonial, index) => (
                 <div key={index} className="w-full flex-shrink-0 px-4">
                   <div className="bg-gray-800 rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto">
@@ -333,7 +333,7 @@ export default function Home() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-gray-800">
+      <section id="pricing" className="py-20 bg-gray-800 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">Choose Your Plan</h2>
@@ -452,7 +452,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-gray-900">
+      <section id="contact" className="py-20 bg-gray-900 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
@@ -512,7 +512,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-950 text-white py-12 border-t border-gray-800">
+      <footer className="bg-gray-950 text-white py-12 border-t border-gray-800 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
